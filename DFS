@@ -1,0 +1,30 @@
+def dfs(graph, node, visited):
+    if node not in visited:
+        print(node, end=" ")
+        visited.add(node)
+        for neighbor in graph[node]:
+            dfs(graph, neighbor, visited)
+
+
+graph = {}
+
+
+edges = int(input("Enter the number of edges: "))
+
+print("Enter each edge (example: A B or 1 2):")
+for _ in range(edges):
+    u, v = input().split()
+
+    
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
+    graph[u].append(v)
+    graph[v].append(u)
+
+start_node = input("Enter the starting node for DFS: ")
+
+visited = set()
+print("\nDFS Traversal Order:")
+dfs(graph, start_node, visited)
