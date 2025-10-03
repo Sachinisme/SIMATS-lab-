@@ -1,0 +1,44 @@
+
+variables = ["A", "B", "C", "D"]
+
+# Domains: available colors
+domains = ["Red", "Green", "Blue"]
+
+# Neighbors (constraints: adjacent regions must have different colors)
+neighbors = {
+    "A": ["B", "C"],
+    "B": ["A", "C", "D"],
+    "C": ["A", "B", "D"],
+    "D": ["B", "C"]
+}
+
+# Function to check if assignment is valid
+def is_valid(var, value, assignment):
+    for neighbor in neighbors[var]:
+        if neighbor in assignment and assignment[neighbor] == value:
+            return False
+    return True
+
+# Backtracking CSP solver
+def backtrack(assignment):
+    if len(assignment) == len(variables):
+        return assignment
+    
+    # Select next variable
+    unassigned = [v for v in variables if v not in assignment]
+    var = unassigned[0]
+    
+    for value in domains:
+        if is_valid(var, value, assignment):
+            assignment[var] = value
+            result = backtrack(assignment)
+            if result:
+                return result
+            del assignment[var]  
+    
+    return None
+
+
+solution = backtrack({})
+print("Solution to Map Coloring CSP:")
+print(solution)
