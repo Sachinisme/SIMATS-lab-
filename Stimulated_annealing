@@ -1,0 +1,48 @@
+import math
+import random
+
+def objective(x):
+    return x**2  # simple function to minimize
+
+def simulated_annealing():
+    # Initial solution
+    current_solution = random.uniform(-10, 10)
+    current_cost = objective(current_solution)
+    
+    # Initial temperature and cooling rate
+    T = 1000
+    T_min = 1e-5
+    alpha = 0.95
+    
+    best_solution = current_solution
+    best_cost = current_cost
+    
+    while T > T_min:
+        # Generate neighbor solution
+        neighbor = current_solution + random.uniform(-1, 1)
+        neighbor_cost = objective(neighbor)
+        
+        # Calculate cost difference
+        delta_E = neighbor_cost - current_cost
+        
+        # Accept new solution if better or with probability if worse
+        if delta_E < 0 or random.random() < math.exp(-delta_E / T):
+            current_solution = neighbor
+            current_cost = neighbor_cost
+            
+            # Update best solution
+            if current_cost < best_cost:
+                best_solution = current_solution
+                best_cost = current_cost
+        
+        # Decrease temperature
+        T = T * alpha
+    
+    return best_solution, best_cost
+
+# ---------------------------
+# Main Program
+# ---------------------------
+best_sol, best_val = simulated_annealing()
+print("Best solution:", best_sol)
+print("Minimum value of function:", best_val)
