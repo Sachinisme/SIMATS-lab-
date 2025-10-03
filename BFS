@@ -1,0 +1,40 @@
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+
+    print("\nBFS Traversal Order:")
+    while queue:
+        node = queue.popleft()
+
+        if node not in visited:
+            print(node, end=" ")
+            visited.add(node)
+
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+
+
+graph = {}
+
+
+edges = int(input("Enter the number of edges: "))
+
+print("Enter each edge (example: A B or 1 2):")
+for _ in range(edges):
+    u, v = input().split()
+
+    
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
+    graph[u].append(v)
+    graph[v].append(u)
+
+start_node = input("Enter the starting node for BFS: ")
+
+
+bfs(graph, start_node)
