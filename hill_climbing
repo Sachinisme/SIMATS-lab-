@@ -1,0 +1,55 @@
+def hill_climbing(graph, heuristics, start, goal):
+    current = start
+    path = [current]
+
+    while True:
+        neighbors = graph.get(current, [])
+        if not neighbors:
+            break
+
+        # Choose neighbor with best heuristic
+        next_node = min(neighbors, key=lambda x: heuristics[x])
+
+        # If the neighbor is better, move
+        if heuristics[next_node] < heuristics[current]:
+            current = next_node
+            path.append(current)
+
+            # Goal check
+            if current == goal:
+                return path
+        else:
+            # No better neighbor, stop
+            break
+
+    return None if current != goal else path
+
+
+
+graph = {}
+n = int(input("Enter the number of nodes in the graph: "))
+
+# Input graph
+for i in range(n):
+    node = input(f"Enter node {i+1}: ")
+    neighbors = input(f"Enter neighbors of {node} (separated by space): ").split()
+    graph[node] = neighbors
+
+# Input heuristics
+heuristics = {}
+print("\nEnter heuristic values (h(n)) for each node:")
+for node in graph:
+    heuristics[node] = int(input(f"h({node}): "))
+
+# Input start and goal
+start = input("\nEnter the start node: ")
+goal = input("Enter the goal node: ")
+
+# Run Hill Climbing
+result = hill_climbing(graph, heuristics, start, goal)
+
+if result:
+    print("\nPath found using Hill Climbing:")
+    print(" -> ".join(result))
+else:
+    print("\nNo solution found (stuck at local maximum).")
