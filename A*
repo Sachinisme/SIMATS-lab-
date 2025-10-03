@@ -1,0 +1,62 @@
+import heapq
+
+def a_star(graph, heuristics, start, goal):
+    open_list = []
+    heapq.heappush(open_list, (heuristics[start], start))  # (f, node)
+    
+    g = {start: 0}         # cost from start
+    parent = {start: None} # to reconstruct path
+    
+    while open_list:
+        f, current = heapq.heappop(open_list)
+
+        if current == goal:
+            path = []
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+            return path[::-1]  # reverse path
+        
+        for neighbor, cost in graph[current]:
+            tentative_g = g[current] + cost
+            if neighbor not in g or tentative_g < g[neighbor]:
+                g[neighbor] = tentative_g
+                f_score = tentative_g + heuristics[neighbor]
+                heapq.heappush(open_list, (f_score, neighbor))
+                parent[neighbor] = current
+
+    return None
+
+# -------------------------------
+# Main Program
+# -------------------------------
+graph = {}
+n = int(input("Enter the number of nodes in the graph: "))
+
+# Input graph edges
+for i in range(n):
+    node = input(f"Enter node {i+1}: ")
+    graph[node] = []
+    edges = int(input(f"Enter number of neighbors of {node}: "))
+    for _ in range(edges):
+        neighbor, cost = input(f"Enter neighbor and cost of edge from {node}: ").split()
+        graph[node].append((neighbor, int(cost)))
+
+# Input heuristics
+heuristics = {}
+print("\nEnter heuristic values (h(n)) for each node:")
+for node in graph:
+    heuristics[node] = int(input(f"h({node}): "))
+
+# Input start and goal
+start = input("\nEnter the start node: ")
+goal = input("Enter the goal node: ")
+
+# Run A*
+result = a_star(graph, heuristics, start, goal)
+
+if result:
+    print("\nPath found using A* Search:")
+    print(" -> ".join(result))
+else:
+    print("No path found.")
