@@ -1,0 +1,60 @@
+import random
+
+# Parameters
+POP_SIZE = 6
+CHROM_LENGTH = 5  # binary length for 0-31
+GENERATIONS = 10
+MUTATION_RATE = 0.1
+
+# Objective function
+def fitness(chrom):
+    x = int(chrom, 2)
+    return x**2
+
+# Selection: Roulette Wheel
+def select(pop, fitnesses):
+    total_fit = sum(fitnesses)
+    pick = random.uniform(0, total_fit)
+    current = 0
+    for chrom, fit in zip(pop, fitnesses):
+        current += fit
+        if current > pick:
+            return chrom
+
+# Crossover: Single Point
+def crossover(parent1, parent2):
+    point = random.randint(1, CHROM_LENGTH-1)
+    child1 = parent1[:point] + parent2[point:]
+    child2 = parent2[:point] + parent1[point:]
+    return child1, child2
+
+# Mutation: Flip bit
+def mutate(chrom):
+    chrom_list = list(chrom)
+    for i in range(CHROM_LENGTH):
+        if random.random() < MUTATION_RATE:
+            chrom_list[i] = '1' if chrom_list[i]=='0' else '0'
+    return ''.join(chrom_list)
+
+# Initialize population randomly
+population = [''.join(random.choice('01') for _ in range(CHROM_LENGTH)) for _ in range(POP_SIZE)]
+
+for gen in range(GENERATIONS):
+    fitnesses = [fitness(ch) for ch in population]
+    new_pop = []
+    while len(new_pop) < POP_SIZE:
+        p1 = select(population, fitnesses)
+        p2 = select(population, fitnesses)
+        c1, c2 = crossover(p1, p2)
+        new_pop.extend([mutate(c1), mutate(c2)])
+    population = new_pop[:POP_SIZE]
+
+# Get best solution
+fitnesses = [fitness(ch) for ch in population]
+best_index = fitnesses.index(max(fitnesses))
+best_chrom = population[best_index]
+best_val = int(best_chrom, 2)
+
+print("Best solution (binary):", best_chrom)
+print("Best value (decimal):", best_val)
+print("Maximum fitness:", fitness(best_chrom))
