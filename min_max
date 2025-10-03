@@ -1,0 +1,94 @@
+import math
+
+# Function to check if game is over
+def evaluate(board):
+    # Winning conditions
+    for row in board:
+        if row.count('X') == 3:
+            return 10
+        if row.count('O') == 3:
+            return -10
+    
+    for col in range(3):
+        if board[0][col] == board[1][col] == board[2][col] == 'X':
+            return 10
+        if board[0][col] == board[1][col] == board[2][col] == 'O':
+            return -10
+
+    if board[0][0] == board[1][1] == board[2][2] == 'X':
+        return 10
+    if board[0][0] == board[1][1] == board[2][2] == 'O':
+        return -10
+    if board[0][2] == board[1][1] == board[2][0] == 'X':
+        return 10
+    if board[0][2] == board[1][1] == board[2][0] == 'O':
+        return -10
+    
+    return 0
+
+# Check if any moves left
+def moves_left(board):
+    for row in board:
+        if '_' in row:
+            return True
+    return False
+
+# Minimax function
+def minimax(board, depth, isMax):
+    score = evaluate(board)
+
+    if score == 10 or score == -10:
+        return score
+    if not moves_left(board):
+        return 0
+
+    if isMax:
+        best = -math.inf
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == '_':
+                    board[i][j] = 'X'
+                    best = max(best, minimax(board, depth+1, not isMax))
+                    board[i][j] = '_'
+        return best
+    else:
+        best = math.inf
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == '_':
+                    board[i][j] = 'O'
+                    best = min(best, minimax(board, depth+1, not isMax))
+                    board[i][j] = '_'
+        return best
+
+# Find the best move for 'X'
+def find_best_move(board):
+    best_val = -math.inf
+    best_move = (-1, -1)
+
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == '_':
+                board[i][j] = 'X'
+                move_val = minimax(board, 0, False)
+                board[i][j] = '_'
+                if move_val > best_val:
+                    best_move = (i, j)
+                    best_val = move_val
+    return best_move
+
+# ---------------------------
+# Main Program
+# ---------------------------
+board = [
+    ['X', 'O', 'X'],
+    ['O', 'O', '_'],
+    ['_', '_', '_']
+]
+
+print("Current Board:")
+for row in board:
+    print(row)
+
+best_move = find_best_move(board)
+print("\nBest move for X is:", best_move)
