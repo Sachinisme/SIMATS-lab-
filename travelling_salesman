@@ -1,0 +1,40 @@
+import sys
+
+def tsp(graph, visited, curr_pos, n, count, cost, ans, path, best_path):
+    
+    if count == n and graph[curr_pos][0]:
+        if cost + graph[curr_pos][0] < ans[0]:
+            ans[0] = cost + graph[curr_pos][0]
+            best_path[:] = path[:] + [0]   # update best path
+        return
+
+    # Try to go to every unvisited city
+    for i in range(n):
+        if not visited[i] and graph[curr_pos][i]:
+            visited[i] = True
+            path.append(i)
+
+            tsp(graph, visited, i, n, count+1, cost + graph[curr_pos][i], ans, path, best_path)
+
+            # Backtrack
+            visited[i] = False
+            path.pop()
+
+
+n = int(input("Enter number of cities: "))
+
+print("\nEnter cost adjacency matrix (row by row):")
+graph = []
+for _ in range(n):
+    row = list(map(int, input().split()))
+    graph.append(row)
+
+visited = [False] * n
+visited[0] = True
+ans = [sys.maxsize]
+best_path = []
+
+tsp(graph, visited, 0, n, 1, 0, ans, [0], best_path)
+
+print("\nMinimum cost:", ans[0])
+print("Path:", " -> ".join(map(str, best_path)))
